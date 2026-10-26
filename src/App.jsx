@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import './App.css';
 import Header from './components/layout/Header';
 import Sidebar from './components/layout/Sidebar';
-import DashboardOverview from './components/dashboard/Dashboardoverview';
+import DashboardOverview from './components/dashboard/DashboardOverview';
 import CategoryManagement from './components/categories/CategoryManagement';
 import Subcategories from './components/subcategories/Subcategories';
 import ApprovedPartners from './components/partners/ApprovedPartners';
