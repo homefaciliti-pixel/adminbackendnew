@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import './App.css';
 import Header from './components/layout/Header';
 import Sidebar from './components/layout/Sidebar';
@@ -20,19 +20,40 @@ import ReportsManagement from './components/reports/ReportsManagment';
 
 const App = () => {
   const [activeTab, setActiveTab] = useState('dashboard');
+  const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
+
+  // Close the mobile navigation after a page is selected.
+  useEffect(() => {
+    setIsMobileSidebarOpen(false);
+  }, [activeTab]);
 
   return (
-    <div className="min-h-screen bg-gray-50 flex">
+    <div className="admin-shell min-h-screen bg-gray-50 flex">
+      {/* Mobile backdrop */}
+      {isMobileSidebarOpen && (
+        <button
+          type="button"
+          aria-label="Close navigation menu"
+          className="admin-sidebar-backdrop lg:hidden"
+          onClick={() => setIsMobileSidebarOpen(false)}
+        />
+      )}
+
       {/* Sidebar Navigation */}
-      <Sidebar activeTab={activeTab} setActiveTab={setActiveTab} />
+      <Sidebar
+        activeTab={activeTab}
+        setActiveTab={setActiveTab}
+        isMobileOpen={isMobileSidebarOpen}
+        onClose={() => setIsMobileSidebarOpen(false)}
+      />
 
       {/* Main Content Container */}
-      <div className="flex-1 ml-64 flex flex-col">
+      <div className="admin-main flex-1 min-w-0 flex flex-col">
         {/* Top Header Bar */}
-        <Header />
+        <Header onMenuClick={() => setIsMobileSidebarOpen((open) => !open)} />
 
         {/* Dynamic Page Content Area */}
-        <main className="mt-16 p-8 flex-1 overflow-y-auto">
+        <main className="admin-content mt-16 p-8 flex-1 min-w-0">
 
           {/* 🔥 Render the live Dashboard Component here */}
           {activeTab === 'dashboard' && <DashboardOverview />}
