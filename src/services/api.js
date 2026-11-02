@@ -3,7 +3,7 @@ import axios from 'axios';
 // Base API instance pointing to your Node.js backend
 const API = axios.create({
   baseURL: 'https://adminbackend-1-h03r.onrender.com', 
-  timeout: 10000,
+  timeout: 10000,   //  10 sec
   headers: {
     'Content-Type': 'application/json',
   },
