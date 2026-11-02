@@ -608,7 +608,60 @@ const Subcategories = () => {
           </select>
         </div>
 
-        <div>
+
+        {/* Image Section with URL and File Browser */}
+  <div>
+  <label className="block text-sm font-medium text-gray-700 mb-1">
+    Subcategory Image
+  </label>
+  
+  <div className="space-y-3">
+    {/* Option 1: File Upload from Browser */}
+    <div className="flex items-center space-x-3">
+      <input
+        type="file"
+        accept="image/*"
+        onChange={(e) => {
+          const file = e.target.files[0];
+          if (file) {
+            // Aap yahan chahein toh file ko preview ke liye URL.createObjectURL(file) mein convert kar sakte hain
+            // Ya agar direct upload API hai toh file object ko state mein save kar sakte hain
+            setFormData(prev => ({ 
+              ...prev, 
+              imageFile: file, 
+              image: URL.createObjectURL(file) // Preview ke liye ya local path ke tor par
+            }));
+          }
+        }}
+        className="block w-full text-xs text-slate-500
+          file:mr-4 file:py-2 file:px-4
+          file:rounded-xl file:border-0
+          file:text-xs file:font-semibold
+          file:bg-teal-50 file:text-teal-700
+          hover:file:bg-teal-100 cursor-pointer border border-gray-200 rounded-xl bg-slate-50"
+      />
+    </div>
+
+    {/* Divider or Text */}
+    <div className="flex items-center my-1">
+      <div className="flex-grow border-t border-gray-200"></div>
+      <span className="flex-shrink mx-4 text-gray-400 text-[11px] uppercase font-semibold">or paste URL</span>
+      <div className="flex-grow border-t border-gray-200"></div>
+    </div>
+
+    {/* Option 2: Direct Image URL Input */}
+    <input
+      type="text"
+      name="image"
+      value={formData.image || ''}
+      onChange={(e) => setFormData(prev => ({ ...prev, image: e.target.value, imageFile: null }))}
+      className="border border-gray-300 p-2.5 rounded-xl w-full text-sm focus:outline-none focus:ring-2 focus:ring-teal-500 bg-slate-50"
+      placeholder="https://example.com/image.jpg"
+    />
+  </div>
+</div>
+
+        {/* <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">
             Image URL
           </label>
@@ -621,7 +674,7 @@ const Subcategories = () => {
             className="border border-gray-300 p-2.5 rounded-lg w-60 focus:outline-none focus:ring-2 focus:ring-teal-500"
             placeholder="Image URL"
           />
-        </div>
+        </div> */}
 
         <div>
           <label className="flex items-center gap-2 text-sm font-medium text-gray-700 mb-1">
