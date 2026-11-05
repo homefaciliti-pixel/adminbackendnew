@@ -69,19 +69,71 @@ const AddServiceModal = ({ isOpen, onClose, onSuccess, onNavigateToSubcategories
     }));
   };
 
+  // const handleSubmit = async (e) => {
+  //   e.preventDefault();
+  //   setLoading(true);
+  //   setError(null);
+
+  //   try {
+  //     const payload = {
+  //       ...formData,
+  //       price: Number(formData.price),
+  //       cutPrice: formData.cutPrice ? Number(formData.cutPrice) : null,
+  //       categoryId: Number(formData.categoryId),
+  //       sub_category_id: formData.sub_category_id ? Number(formData.sub_category_id) : null,
+  //     };
+
+  //     const res = await API.post('/api/services', payload);
+  //     const createdService = res.data.data || res.data.service || res.data;
+      
+  //     if (onSuccess) onSuccess(createdService);
+  //     onClose();
+  //   } catch (err) {
+  //     console.error('Error creating service:', err);
+  //     setError(err.response?.data?.message || 'Failed to create service. Please check your inputs.');
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
     setError(null);
 
     try {
+      let finalImageUrl = formData.image || '';
+
+      // 1. Agar user ne nayi file select ki hai, pehle use /api/upload par bhejein
+      if (formData.imageFile) {
+        const uploadData = new FormData();
+        uploadData.append('image', formData.imageFile);
+
+        const uploadRes = await API.post('/api/upload', uploadData, {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
+        });
+
+        if (uploadRes.data?.data?.url || uploadRes.data?.url) {
+          finalImageUrl = uploadRes.data.data?.url || uploadRes.data.url; // Server ka real URL
+        } else {
+          throw new Error('Image upload failed.');
+        }
+      }
+
+      // 2. Payload taiyar karein aur blob: URL ko block/sanitize karein
       const payload = {
         ...formData,
         price: Number(formData.price),
         cutPrice: formData.cutPrice ? Number(formData.cutPrice) : null,
         categoryId: Number(formData.categoryId),
         sub_category_id: formData.sub_category_id ? Number(formData.sub_category_id) : null,
+        image: finalImageUrl.startsWith('blob:') ? '' : finalImageUrl.trim(),
       };
+
+      // imageFile ko payload se hata dein kyunki backend ko sirf URL chahiye
+      delete payload.imageFile;
 
       const res = await API.post('/api/services', payload);
       const createdService = res.data.data || res.data.service || res.data;
@@ -90,7 +142,7 @@ const AddServiceModal = ({ isOpen, onClose, onSuccess, onNavigateToSubcategories
       onClose();
     } catch (err) {
       console.error('Error creating service:', err);
-      setError(err.response?.data?.message || 'Failed to create service. Please check your inputs.');
+      setError(err.response?.data?.message || err.message || 'Failed to create service. Please check your inputs.');
     } finally {
       setLoading(false);
     }
